@@ -10,6 +10,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwaggerUI(swaggerUiOptions =>
+    {
+        // url needs to be specified since we are using the new "MapOpenApi" and not "old" UseSwagger 
+        swaggerUiOptions.SwaggerEndpoint("../openapi/v1.json", "OWT Boats API");
+    });
 }
 
 app.UseHttpsRedirection();
