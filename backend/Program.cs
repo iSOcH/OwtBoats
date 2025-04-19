@@ -1,12 +1,27 @@
+using backend.Database;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddDbContext<OwtBoatsDbContext>(o =>
+{
+    o.UseNpgsql(builder.Configuration.GetConnectionString("OwtBoatsDb"));
+});
+
+// Auth
+builder.Services.AddAuthorization();
+builder.Services.AddIdentityApiEndpoints<OwtBoatsUser>()
+    .AddEntityFrameworkStores<OwtBoatsDbContext>();
+
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.MapGroup("/auth").MapIdentityApi<OwtBoatsUser>();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -16,8 +31,6 @@ if (app.Environment.IsDevelopment())
         swaggerUiOptions.SwaggerEndpoint("../openapi/v1.json", "OWT Boats API");
     });
 }
-
-app.UseHttpsRedirection();
 
 var summaries = new[]
 {
@@ -37,6 +50,13 @@ app.MapGet("/weatherforecast", () =>
         return forecast;
     })
     .WithName("GetWeatherForecast");
+
+// Apply migrations automatically on startup
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<OwtBoatsDbContext>();
+    await dbContext.Database.MigrateAsync();
+}
 
 app.Run();
 
