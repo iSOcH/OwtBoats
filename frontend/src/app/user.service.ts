@@ -2,19 +2,21 @@ import {inject, Injectable, Signal, signal} from '@angular/core';
 import {firstValueFrom} from 'rxjs';
 import {AuthService} from './api/services';
 
+type LoginState = "Pending" | "NotLoggedIn" | { email: string; };
+
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   private _authService = inject(AuthService)
 
-  private _userName = signal("Checking login state...");
+  private _userName = signal<LoginState>("NotLoggedIn");
 
   constructor() {
     this.checkLoggedIn();
   }
 
-  public get userName(): Signal<string> {
+  public get userName(): Signal<LoginState> {
     return this._userName;
   }
 
@@ -31,9 +33,9 @@ export class UserService {
   async checkLoggedIn(): Promise<undefined> {
     try {
       const loginInfo = await firstValueFrom(this._authService.authManageInfoGet());
-      this._userName.set(loginInfo.email);
+      this._userName.set({ email: loginInfo.email });
     } catch {
-      this._userName.set("Not logged in");
+      this._userName.set("NotLoggedIn");
     }
   }
 

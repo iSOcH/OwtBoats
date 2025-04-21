@@ -1,1 +1,7 @@
-<p>{{ userName() }}</p>
+<p>
+  @if (showLoginLink) {
+    <a routerLink="/login">Log in</a>
+  } @else {
+    Signed in as: {{ userName }}
+  }
+</p>
