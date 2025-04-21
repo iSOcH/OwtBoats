@@ -1,5 +1,5 @@
 @backend_HostAddress = http://localhost:5261
-@boatId = daff5894-5eaa-42f1-9f6e-53e5b63868d4
+@boatId = {{$random.uuid}}
 
 @userEmail = http-client-tests@owt-boats.example
 @userPassword = ood8iesha!8wueZ0
@@ -46,4 +46,77 @@ GET {{backend_HostAddress}}/boats
 Authorization: Bearer {{auth_token}}
 Accept: application/json
 
-###
+> {%
+    client.test("Listing boats should succeed", function() {
+        client.assert(response.status == 200, "Response status is not 200");
+        client.assert(typeof(response.body) === typeof([]), "Response body should be array");
+    })
+%}
+
+### Ensure our boat does not yet exist
+GET {{backend_HostAddress}}/boats/{{boatId}}
+Authorization: Bearer {{auth_token}}
+
+> {%
+    client.test("To be created boat does not exist yet", function() {
+        client.assert(response.status === 404);
+    })
+%}
+
+### Create a new boat
+POST {{backend_HostAddress}}/boats
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "id": "{{boatId}}",
+  "data": {
+    "name": "My boat name"
+  }
+}
+
+### Create a new boat again
+POST {{backend_HostAddress}}/boats
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "id": "{{boatId}}",
+  "data": {
+    "name": "My boat name"
+  }
+}
+
+### Find the boat after creation
+GET {{backend_HostAddress}}/boats/{{boatId}}
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+> {%
+    client.test("Newly created boat exists", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.name === "My boat name");
+    })
+%}
+
+### Add a description to our boat
+PUT {{backend_HostAddress}}/boats/{{boatId}}
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "name": "My boat name",
+  "description": "Added description"
+}
+
+### Find the boat after creation
+GET {{backend_HostAddress}}/boats/{{boatId}}
+Authorization: Bearer {{auth_token}}
+Accept: application/json
+
+> {%
+    client.test("Updated boat has description", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.description === "Added description", "Description has not been set");
+    })
+%}

@@ -1,18 +1,28 @@
 using backend.Contracts;
+using backend.Database;
+using backend.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Endpoints;
 
-public class Get
+public class Get(OwtBoatsDbContext dbContext, IUserService userService)
 {
-    public async Task<Results<Ok<BoatInfo>, NotFound>> GetBoat(Guid id)
+    private readonly OwtBoatsDbContext _dbContext = dbContext;
+    private readonly IUserService _userService = userService;
+
+    public async Task<Results<Ok<BoatData>, NotFound>> GetBoat(Guid id)
     {
-        // TODO retrieve
-        // TODO return 404 if not found or found but not owner
+        var userId = _userService.GetUserIdOrThrow();
+        var dbBoat = await _dbContext.Boats.SingleOrDefaultAsync(b => b.Id == id && b.OwningUserId == userId);
+
+        if (dbBoat is null)
+            return TypedResults.NotFound();
         
-        return TypedResults.Ok(new BoatInfo
+        return TypedResults.Ok(new BoatData
         {
-            Name = "Some boat"
+            Name = dbBoat.Name,
+            Description = dbBoat.Description
         });
     }
 }

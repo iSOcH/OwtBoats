@@ -4,4 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace backend.Database;
 
 public class OwtBoatsDbContext(DbContextOptions<OwtBoatsDbContext> options)
-    : IdentityDbContext<OwtBoatsUser>(options);
+    : IdentityDbContext<OwtBoatsUser>(options)
+{
+    public DbSet<Boat> Boats { get; set; }
+}

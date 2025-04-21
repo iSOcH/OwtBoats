@@ -1,5 +1,6 @@
 using backend.Contracts;
 using backend.Database;
+using backend.Services;
 using backend.Validators;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -17,9 +18,11 @@ builder.Services.AddDbContext<OwtBoatsDbContext>(o =>
 builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<OwtBoatsUser>()
     .AddEntityFrameworkStores<OwtBoatsDbContext>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Developer Tools, misc
 builder.Services.AddOpenApi();
+builder.Services.AddHttpContextAccessor();
 
 // Our app: Endpoints
 builder.Services
@@ -31,7 +34,7 @@ builder.Services
 
 // Our app: Validators
 builder.Services
-    .AddScoped<IValidator<BoatInfo>, BoatInfoValidator>()
+    .AddScoped<IValidator<BoatData>, BoatDataValidator>()
     .AddScoped<IValidator<BoatCreateRequest>, BoatCreateValidator>();
 
 var app = builder.Build();
@@ -55,7 +58,7 @@ var boatsGroup = app.MapGroup("/boats").RequireAuthorization();
 boatsGroup.MapGet("/", ([FromServices] backend.Endpoints.Index endpoint) => endpoint.ListBoats());
 boatsGroup.MapPost("/", ([FromBody] BoatCreateRequest boat, [FromServices] backend.Endpoints.Create endpoint) => endpoint.CreateBoat(boat));
 boatsGroup.MapGet("/{id:Guid}", (Guid id, [FromServices] backend.Endpoints.Get endpoint) => endpoint.GetBoat(id));
-boatsGroup.MapPut("/{id:Guid}", (Guid id, [FromBody] BoatInfo boat, [FromServices] backend.Endpoints.Update endpoint) => endpoint.UpdateBoat(id, boat));
+boatsGroup.MapPut("/{id:Guid}", (Guid id, [FromBody] BoatData boat, [FromServices] backend.Endpoints.Update endpoint) => endpoint.UpdateBoat(id, boat));
 boatsGroup.MapDelete("/{id:Guid}", (Guid id, [FromServices] backend.Endpoints.Delete endpoint) => endpoint.DeleteBoat(id));
 
 // Apply migrations automatically on startup

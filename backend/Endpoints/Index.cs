@@ -1,20 +1,32 @@
 using backend.Contracts;
+using backend.Database;
+using backend.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Endpoints;
 
-public class Index
+public class Index(OwtBoatsDbContext dbContext, IUserService userService)
 {
-    public Task<List<BoatDetail>> ListBoats()
-    {
-        List<BoatDetail> list = [new()
-        {
-            Id = Guid.NewGuid(),
-            Boat = new() {
-                Name = "MyBoat",
-                Description = "Some description"
-            }
-        }];
+    private readonly OwtBoatsDbContext _dbContext = dbContext;
+    private readonly IUserService _userService = userService;
 
-        return Task.FromResult(list);
+    public async Task<IReadOnlyList<BoatDetail>> ListBoats()
+    {
+        var userId = _userService.GetUserIdOrThrow();
+        var dbBoats = _dbContext.Boats.Where(b => b.OwningUserId == userId);
+
+        var mappedBoats = await dbBoats
+            .Select(b => new BoatDetail
+            {
+                Id = b.Id,
+                Data = new BoatData
+                {
+                    Name = b.Name,
+                    Description = b.Description
+                }
+            })
+            .ToArrayAsync();
+
+        return mappedBoats;
     }
 }

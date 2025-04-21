@@ -5,9 +5,9 @@ namespace backend.Validators;
 
 public class BoatCreateValidator : AbstractValidator<BoatCreateRequest>
 {
-    public BoatCreateValidator(IValidator<BoatInfo> boatInfoValidator)
+    public BoatCreateValidator(IValidator<BoatData> boatInfoValidator)
     {
         RuleFor(boat => boat.Id).NotEmpty();
-        RuleFor(boat => boat.Boat).SetValidator(boatInfoValidator);
+        RuleFor(boat => boat.Data).NotNull().SetValidator(boatInfoValidator);
     }
 }
