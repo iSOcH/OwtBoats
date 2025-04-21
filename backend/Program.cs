@@ -72,12 +72,7 @@ if (app.Environment.IsDevelopment())
     // without this, WebApplicationBuilder will add EndpointMiddleware at the end
     // UseProxyToSpaDevelopmentServer adds a terminal middleware, this will block access to
     // the controllers as well as swagger UI, openAPI spec etc.
-    // docs say it's fine to call this method, but then it seems very weird that 
-    // ASP0014 rule says you should never ignore its warnings 🤦
-    // https://learn.microsoft.com/en-us/aspnet/core/diagnostics/asp0014?view=aspnetcore-7.0
-    #pragma warning disable ASP0014 // we need EndpointMiddleware before UseProxyToSpaDevelopmentServer
     app.UseEndpoints(_ => {});
-    #pragma warning restore ASP0014
 
     // actually put the proxy in place
     app.UseSpa(spa => spa.UseProxyToSpaDevelopmentServer("http://localhost:4200"));
