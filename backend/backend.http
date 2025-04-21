@@ -1,6 +1,49 @@
 @backend_HostAddress = http://localhost:5261
+@boatId = daff5894-5eaa-42f1-9f6e-53e5b63868d4
 
-GET {{backend_HostAddress}}/weatherforecast/
+@userEmail = http-client-tests@owt-boats.example
+@userPassword = ood8iesha!8wueZ0
+
+
+### (try to) Register first
+POST {{backend_HostAddress}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "{{userEmail}}",
+  "password": "{{userPassword}}"
+}
+
+### Sign in
+POST {{backend_HostAddress}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{userEmail}}",
+  "password": "{{userPassword}}"
+}
+
+> {%
+    client.test("Request executed successfully", function () {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+
+    client.test("Response content-type is json", function () {
+        const type = response.contentType.mimeType;
+        client.assert(type === "application/json", `Expected 'application/json' but received '${type}'`);
+    });
+    
+    client.test("Response contains access token", function () {
+        const accessToken = response.body["accessToken"];
+        client.assert(accessToken?.length > 0);
+    })
+
+    client.global.set("auth_token", response.body["accessToken"]);
+%}
+
+### List our boats
+GET {{backend_HostAddress}}/boats
+Authorization: Bearer {{auth_token}}
 Accept: application/json
 
 ###
