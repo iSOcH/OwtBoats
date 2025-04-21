@@ -61,6 +61,28 @@ boatsGroup.MapGet("/{id:Guid}", (Guid id, [FromServices] backend.Endpoints.Get e
 boatsGroup.MapPut("/{id:Guid}", (Guid id, [FromBody] BoatData boat, [FromServices] backend.Endpoints.Update endpoint) => endpoint.UpdateBoat(id, boat)).WithName("UpdateBoat");
 boatsGroup.MapDelete("/{id:Guid}", (Guid id, [FromServices] backend.Endpoints.Delete endpoint) => endpoint.DeleteBoat(id)).WithName("DeleteBoat");
 
+// set up reverse-proxy for local angular development server
+if (app.Environment.IsDevelopment())
+{
+    app.UseRouting();
+    
+    // we have this already above, but we need it _between_ UseRouting and UseEndpoints (otherwise Auth won't work)
+    app.UseAuthorization();
+    
+    // without this, WebApplicationBuilder will add EndpointMiddleware at the end
+    // UseProxyToSpaDevelopmentServer adds a terminal middleware, this will block access to
+    // the controllers as well as swagger UI, openAPI spec etc.
+    // docs say it's fine to call this method, but then it seems very weird that 
+    // ASP0014 rule says you should never ignore its warnings 🤦
+    // https://learn.microsoft.com/en-us/aspnet/core/diagnostics/asp0014?view=aspnetcore-7.0
+    #pragma warning disable ASP0014 // we need EndpointMiddleware before UseProxyToSpaDevelopmentServer
+    app.UseEndpoints(_ => {});
+    #pragma warning restore ASP0014
+
+    // actually put the proxy in place
+    app.UseSpa(spa => spa.UseProxyToSpaDevelopmentServer("http://localhost:4200"));
+}
+
 // Apply migrations automatically on startup
 using (var scope = app.Services.CreateScope())
 {
