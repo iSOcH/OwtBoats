@@ -40,7 +40,7 @@ builder.Services
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-app.MapGroup("/auth").MapIdentityApi<OwtBoatsUser>();
+app.MapGroup("/auth").WithTags("auth").MapIdentityApi<OwtBoatsUser>();
 
 if (app.Environment.IsDevelopment())
 {
@@ -53,13 +53,13 @@ if (app.Environment.IsDevelopment())
 }
 
 // our endpoints
-var boatsGroup = app.MapGroup("/boats").RequireAuthorization();
+var boatsGroup = app.MapGroup("/boats").WithTags("boats").RequireAuthorization();
 
-boatsGroup.MapGet("/", ([FromServices] backend.Endpoints.Index endpoint) => endpoint.ListBoats());
-boatsGroup.MapPost("/", ([FromBody] BoatCreateRequest boat, [FromServices] backend.Endpoints.Create endpoint) => endpoint.CreateBoat(boat));
-boatsGroup.MapGet("/{id:Guid}", (Guid id, [FromServices] backend.Endpoints.Get endpoint) => endpoint.GetBoat(id));
-boatsGroup.MapPut("/{id:Guid}", (Guid id, [FromBody] BoatData boat, [FromServices] backend.Endpoints.Update endpoint) => endpoint.UpdateBoat(id, boat));
-boatsGroup.MapDelete("/{id:Guid}", (Guid id, [FromServices] backend.Endpoints.Delete endpoint) => endpoint.DeleteBoat(id));
+boatsGroup.MapGet("/", ([FromServices] backend.Endpoints.Index endpoint) => endpoint.ListBoats()).WithName("ListBoats");
+boatsGroup.MapPost("/", ([FromBody] BoatCreateRequest boat, [FromServices] backend.Endpoints.Create endpoint) => endpoint.CreateBoat(boat)).WithName("CreateBoat");
+boatsGroup.MapGet("/{id:Guid}", (Guid id, [FromServices] backend.Endpoints.Get endpoint) => endpoint.GetBoat(id)).WithName("GetBoat");
+boatsGroup.MapPut("/{id:Guid}", (Guid id, [FromBody] BoatData boat, [FromServices] backend.Endpoints.Update endpoint) => endpoint.UpdateBoat(id, boat)).WithName("UpdateBoat");
+boatsGroup.MapDelete("/{id:Guid}", (Guid id, [FromServices] backend.Endpoints.Delete endpoint) => endpoint.DeleteBoat(id)).WithName("DeleteBoat");
 
 // Apply migrations automatically on startup
 using (var scope = app.Services.CreateScope())
