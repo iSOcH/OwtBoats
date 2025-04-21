@@ -1,3 +1,4 @@
+using backend;
 using backend.Contracts;
 using backend.Database;
 using backend.Services;
@@ -21,7 +22,7 @@ builder.Services.AddIdentityApiEndpoints<OwtBoatsUser>()
 builder.Services.AddScoped<IUserService, UserService>();
 
 // Developer Tools, misc
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(o => o.AddDocumentTransformer<AddServersTransformer>());
 builder.Services.AddHttpContextAccessor();
 
 // Our app: Endpoints
