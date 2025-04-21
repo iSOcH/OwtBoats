@@ -3,10 +3,13 @@ import { RouterOutlet } from '@angular/router';
 
 import { UserService } from './user.service';
 
+import { UserInfoComponent } from './user-info/user-info.component';
+
 @Component({
   selector: 'app-root',
   imports: [
-      RouterOutlet
+    RouterOutlet,
+    UserInfoComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
