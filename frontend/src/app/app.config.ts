@@ -13,6 +13,6 @@ export const appConfig: ApplicationConfig = {
 
     // this should be easier, but until the NgModule related stuff is updated, we use the solution provided in https://github.com/cyclosproject/ng-openapi-gen/issues/336#issue-2704985424
     // we need to set the url manually since it is defaulted with a trailing /, causing requests to go to localhost:5261//auth/... which will always 404
-    importProvidersFrom(ApiModule.forRoot({ rootUrl: "http://localhost:5261" })),
+    importProvidersFrom(ApiModule.forRoot({ rootUrl: "" })),
   ]
 };
