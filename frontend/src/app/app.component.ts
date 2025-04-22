@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { UserService } from './user.service';
 
@@ -9,6 +10,7 @@ import { UserInfoComponent } from './user-info/user-info.component';
   selector: 'app-root',
   imports: [
     RouterOutlet,
+    MatToolbarModule,
     UserInfoComponent
   ],
   templateUrl: './app.component.html',
