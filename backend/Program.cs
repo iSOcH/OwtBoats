@@ -4,6 +4,7 @@ using backend.Database;
 using backend.Services;
 using backend.Validators;
 using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,8 +42,6 @@ builder.Services
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-app.MapGroup("/auth").WithTags("auth").MapIdentityApi<OwtBoatsUser>();
-
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -52,6 +51,13 @@ if (app.Environment.IsDevelopment())
         swaggerUiOptions.SwaggerEndpoint("../openapi/v1.json", "OWT Boats API");
     });
 }
+
+// Auth endpoints
+var authGroup = app.MapGroup("/auth").WithTags("auth");
+authGroup.MapIdentityApi<OwtBoatsUser>();
+
+// documentation of MapIdentityApi claims to have this endpoint, but it seems they forgot it :D
+authGroup.MapPost("/logout", async (SignInManager<OwtBoatsUser> signInManager) => await signInManager.SignOutAsync()).RequireAuthorization();
 
 // our endpoints
 var boatsGroup = app.MapGroup("/boats").WithTags("boats").RequireAuthorization();

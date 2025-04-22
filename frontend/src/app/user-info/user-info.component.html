@@ -2,6 +2,9 @@
   @if (showLoginLink) {
     <a routerLink="/login">Log in</a>
   } @else {
-    Signed in as: {{ userName }}
+    User: {{ userName }}
+    @if (showLogoutLink) {
+      <button mat-button (click)="logout()">Logout</button>
+    }
   }
 </p>

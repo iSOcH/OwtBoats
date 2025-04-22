@@ -1,8 +1,6 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
-
-import { UserService } from './user.service';
 
 import { UserInfoComponent } from './user-info/user-info.component';
 
@@ -17,13 +15,6 @@ import { UserInfoComponent } from './user-info/user-info.component';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit {
-  private userService = inject(UserService)
-
+export class AppComponent {
   title = 'OwtBoats';
-
-  async ngOnInit(): Promise<any> {
-    const isLoggedIn = await this.userService.isLoggedIn();
-    console.log("Are we logged in?", isLoggedIn);
-  }
 }

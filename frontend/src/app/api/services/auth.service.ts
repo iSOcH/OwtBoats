@@ -16,6 +16,8 @@ import { authForgotPasswordPost } from '../fn/auth/auth-forgot-password-post';
 import { AuthForgotPasswordPost$Params } from '../fn/auth/auth-forgot-password-post';
 import { authLoginPost } from '../fn/auth/auth-login-post';
 import { AuthLoginPost$Params } from '../fn/auth/auth-login-post';
+import { authLogoutPost } from '../fn/auth/auth-logout-post';
+import { AuthLogoutPost$Params } from '../fn/auth/auth-logout-post';
 import { authManage2FaPost } from '../fn/auth/auth-manage-2-fa-post';
 import { AuthManage2FaPost$Params } from '../fn/auth/auth-manage-2-fa-post';
 import { authManageInfoGet } from '../fn/auth/auth-manage-info-get';
@@ -288,6 +290,31 @@ export class AuthService extends BaseService {
   authManageInfoPost(params: AuthManageInfoPost$Params, context?: HttpContext): Observable<InfoResponse> {
     return this.authManageInfoPost$Response(params, context).pipe(
       map((r: StrictHttpResponse<InfoResponse>): InfoResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `authLogoutPost()` */
+  static readonly AuthLogoutPostPath = '/auth/logout';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `authLogoutPost()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  authLogoutPost$Response(params?: AuthLogoutPost$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return authLogoutPost(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `authLogoutPost$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  authLogoutPost(params?: AuthLogoutPost$Params, context?: HttpContext): Observable<void> {
+    return this.authLogoutPost$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
 
