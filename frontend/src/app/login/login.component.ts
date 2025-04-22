@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 
 import { UserService } from '../user.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,8 @@ import { UserService } from '../user.service';
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
-  private _userService = inject(UserService)
+  private _router = inject(Router);
+  private _userService = inject(UserService);
 
   loginForm: FormGroup;
 
@@ -26,7 +28,8 @@ export class LoginComponent {
     });
   }
 
-  onSubmit() {
-    this._userService.logIn(this.loginForm.value.email, this.loginForm.value.password);
+  async onSubmit() {
+    await this._userService.logIn(this.loginForm.value.email, this.loginForm.value.password);
+    this._router.navigate(['boatslist']);
   }
 }
