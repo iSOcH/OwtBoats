@@ -30,6 +30,6 @@ export class LoginComponent {
 
   async onSubmit() {
     await this._userService.logIn(this.loginForm.value.email, this.loginForm.value.password);
-    this._router.navigate(['boatslist']);
+    this._router.navigate(['boat-list']);
   }
 }

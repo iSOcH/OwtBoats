@@ -1,12 +1,13 @@
 <div class="grid-container">
   <h1 class="mat-h1">My Boats</h1>
+  <button mat-button (click)="addBoat()">Add boat</button>
   <mat-grid-list cols="2" rowHeight="350px">
     @if (boats === null) {
       Loading...
     } @else {
       @for (boat of boats; track boat) {
         <mat-grid-tile>
-          <mat-card class="dashboard-card">
+          <mat-card class="boatlist-card">
             <mat-card-header>
               <mat-card-title>
                 {{boat.data.name}}
@@ -14,12 +15,13 @@
                   <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu" xPosition="before">
-                  <button mat-menu-item>🖊 Edit</button>
+                  <button mat-menu-item (click)="viewBoat(boat.id)">👁 View</button>
+                  <button mat-menu-item (click)="editBoat(boat.id)">🖊 Edit</button>
                   <button mat-menu-item (click)="deleteBoat(boat.id)">🗑 Remove</button>
                 </mat-menu>
               </mat-card-title>
             </mat-card-header>
-            <mat-card-content class="dashboard-card-content">
+            <mat-card-content class="boatlist-card-content">
               <div>{{boat.data.description ?? "(No description)"}}</div>
             </mat-card-content>
           </mat-card>

@@ -1,0 +1,32 @@
+<form [formGroup]="boatForm" (ngSubmit)="save()">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Boat</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-form-field>
+        <mat-label>Id</mat-label>
+        <input matInput id="id" disabled value="{{boatId}}">
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-content>
+      <mat-form-field>
+        <mat-label>Name</mat-label>
+        <input matInput id="name" formControlName="name">
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-content>
+      <mat-form-field>
+        <mat-label>Description</mat-label>
+        <textarea matInput id="description" formControlName="description"></textarea>
+      </mat-form-field>
+    </mat-card-content>
+
+      <mat-card-actions>
+        @if (!readOnly) {
+          <button mat-button type="submit">Save</button>
+        }
+        <button mat-button>@if (readOnly) { Back } @else { Cancel }</button>
+      </mat-card-actions>
+  </mat-card>
+</form>
